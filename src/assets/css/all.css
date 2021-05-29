@@ -1,0 +1,214 @@
+@font-face {
+  font-family: 'Roboto';
+  src: url('../fonts/Roboto-Regular.eot'); /* IE9 Compat Modes */
+  src: url('../fonts/Roboto-Regular.eot?#iefix') format("embedded-opentype"), /* IE6-IE8 */
+  url('../fonts/Roboto-Regular.woff') format("woff"), /* Pretty Modern Browsers */
+  url('../fonts/Roboto-Regular.woff2') format("woff2"), /* Modern Browsers */
+  url('../fonts/Roboto-Regular.ttf') format("truetype"), /* Safari, Android, iOS */
+  url('../fonts/Roboto-Regular.svg#Roboto') format("svg"); /* Legacy iOS */
+}
+@font-face {
+  font-family: 'Roboto Bold';
+  src: url('../fonts/Roboto-Bold.eot'); /* IE9 Compat Modes */
+  src: url('../fonts/Roboto-Bold.eot?#iefix') format("embedded-opentype"), /* IE6-IE8 */
+  url('../fonts/Roboto-Bold.woff') format("woff"), /* Pretty Modern Browsers */
+  url('../fonts/Roboto-Bold.woff2') format("woff2"), /* Modern Browsers */
+  url('../fonts/Roboto-Bold.ttf') format("truetype"), /* Safari, Android, iOS */
+  url('../fonts/Roboto-Bold.svg#RobotoBold') format("svg"); /* Legacy iOS */
+}
+@font-face {
+  font-family: 'Playfair';
+  src: url('../fonts/playfair-display-v21-latin-regular.woff') format("woff"),
+  url('../fonts/playfair-display-v21-latin-regular.woff2') format("woff2"),
+  url('../fonts/PlayfairDisplay-VariableFont_wght.ttf') format("truetype");
+}
+/* Start bootstrap override */
+.navbar-toggler {
+  border: none;
+}
+.mw-50 {
+  max-width: 50%;
+}
+.top-0 {
+  top: 0;
+}
+.bottom-0 {
+  bottom: 0;
+}
+.left-0 {
+  left: 0;
+}
+.right-0 {
+  right: 0;
+}
+.btn-primary {
+  background: #241c15;
+  border: none;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background: #d89700;
+}
+header.b-sidebar-header {
+  border-bottom: 1px solid #d89700;
+}
+.bg-dark {
+  background: #241c15;
+}
+.bg-success {
+  background: #c3c94b;
+}
+.rounded-square {
+  border-radius: 0;
+}
+/* End bootstrap override */
+
+* {
+  font-family: 'Roboto';
+  transition: .2s all !important;
+}
+a, a:hover {
+  color: #d89700;
+  text-decoration: none;
+}
+body {
+  overflow-x: hidden;
+}
+footer {
+  position: relative;
+  z-index: 2;
+}
+
+@media only screen and (max-width: 992px){
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+  }
+}
+
+img {
+  image-rendering: auto;
+}
+img.invert {
+  filter: invert(1);
+}
+h1, h2 {
+  font-family: 'Playfair';
+}
+h1 {
+  letter-spacing: 1px;
+}
+h2.subtitle {
+  letter-spacing: 0.3px;
+  font-size: 18px;
+}
+.text-small {
+  font-size: 0.765rem;
+}
+.text-gold {
+  color: #d89700;
+}
+.bg-gold {
+  background: #d89700;
+}
+section.landing-page > div.container-fluid > div.row > div.col-md-7 {
+  height: auto;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, rgba(92, 77, 66, 0.75) 50%, rgba(0, 0, 0, 1) 100%), url('https://startbootstrap.github.io/startbootstrap-creative/assets/img/bg-masthead.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-size: cover;
+}
+section.landing-page > div.container-fluid > div.row > div.col-md-5 {
+  height: auto;
+  min-height: 100vh;
+}
+.bg-grey {
+  background: #e7e9eb;
+}
+.dashboard-sidebar {
+  min-height: calc(100vh - 62px);
+  height: auto;
+  position: relative;
+  box-shadow: 0 0 5px 3px grey;
+  z-index: 1;
+}
+section.sidebar .sidebar-img {
+  position: relative;
+}
+section.sidebar .sidebar-img select {
+  appearance: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: .5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  z-index: 1;
+  font-weight: 700;
+  color: white;
+}
+section.sidebar .sidebar-img select ~ span:after {
+  content: "\f107";
+  color: white;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 700;
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5rem;
+  padding: .5rem;
+  padding-right: 1rem;
+  background: #00000080;
+}
+section.sidebar a {
+  display: block;
+  width: 100%;
+  color: #2c3e50;
+  padding-left: .5rem;
+  margin: .75rem 0;
+}
+section.sidebar a.parent:after {
+  content: '\f107';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 700;
+  float: right;
+  transform: rotate(0deg);
+  transition: .2s all;
+}
+section.sidebar a.parent.active:after {
+  transform: rotate(180deg);
+}
+section.sidebar a.parent ~ div.nav-child {
+  padding-left: .75rem;
+  opacity: 0;
+  visibility: hidden;
+}
+section.sidebar a.parent.active ~ div.nav-child {
+  opacity: 1;
+  visibility: visible;
+}
+section.sidebar a:hover {
+  color: #d89700;
+  border-left: 3px solid #d89700;
+}
+section.sidebar a.router-link-exact-active {
+  color: #d89700;
+  font-weight: 600;
+  border-left: 3px solid #d89700;
+}
+
+.panel {
+  top: -30px;
+  left: -32px;
+  visibility: hidden;
+}
+
+.proc-action:hover .panel {
+  visibility: visible;
+}
