@@ -45,48 +45,114 @@
           <th>Category</th>
           <th>Proposal Date</th>
           <th>Acceptance Date</th>
-          <th>Procured Date</th>
-          <th>Expired Date</th>
-          <th>Procured By</th>
           <th>Requested By</th>
           <th>Note</th>
           <th></th>
         </thead>
         <tbody>
-          <tr v-for="(proc, index) in procurement" :key="index">
+          <tr v-for="(proc, index) in procurement" :key="index" @click="selectedProc = proc" :class="{'text-info' : proc.return_amount}" style="cursor: pointer;">
             <td>{{proc.id}}</td>
             <td>{{proc.vendor || '-'}}</td>
             <td>{{proc.item_name}}</td>
             <td>{{proc.quantity}}</td>
             <td>{{proc.category}}</td>
             <td>{{formatDate(proc.date_proposal).split('|').join('\n')}}</td>
-            <td>{{formatDate(proc.date_accepted).split('|').join('\n')}}</td>
-            <td>{{formatDate(proc.date_procured).split('|').join('\n')}}</td>
-            <td>{{formatDate(proc.date_exp).split('|').join('\n')}}</td>
-            <td>{{proc.procuror_name || '-'}}</td>
+            <td :class="{'text-danger proc-action position-relative' : proc.date_rejected}">
+              {{ proc.date_accepted ? formatDate(proc.date_accepted).split('|').join('\n') :
+              formatDate(proc.date_rejected).split('|').join('\n')}}
+              <template v-if="proc.date_rejected">
+                <div class="panel bg-white border border-secondary rounded position-absolute p-1">{{proc.reason}}</div>
+              </template>
+            </td>
             <td>{{proc.requestee || '-'}}</td>
             <td>{{proc.note || '-'}}</td>
-            <td>
-              <a v-if="$store.getters.getUserData.role_id == 1 && !proc.date_accepted" href="#" @click="acceptProposal(proc.id)">
-                <span class="fa fa-check proc-action position-relative">
+            <td class="text-nowrap">
+              <a v-if="$store.getters.getUserData.role_id == 1 && !proc.date_accepted && !proc.date_rejected" href="#" @click="selectedProc = proc">
+                <span class="fa fa-check proc-action position-relative px-1" v-b-modal="'modal-accept'">
                   <div class="panel bg-white border border-secondary rounded position-absolute p-1">Accept</div>
                 </span>
-              </a>
-              <a v-if="$store.getters.getUserData.role_id == 3 && proc.date_accepted && !proc.date_procured" href="#" v-b-modal.modal-procured @click="selectedProcId = proc.id">
-                <span class="fa fa-check proc-action position-relative">
-                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Done</div>
+                <span class="fa fa-times proc-action position-relative px-1" v-b-modal="'modal-deny'">
+                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Deny</div>
                 </span>
+                <span class="fa fa-check proc-action position-relative px-1" v-if="proc.date_accepted" @click="order(proc)">
+                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Order</div>
+                </span>
+              </a>
+              <a v-if="$store.getters.getUserData.role_id == 3 && proc.date_accepted" href="#" @click="selectedProc = proc">
+                <template v-if="$store.getters.getUserData.id == proc.procured_by">
+                  <span class="fa fa-clipboard-check proc-action position-relative px-1" v-if="proc.date_ordered && !proc.date_procured" v-b-modal="'modal-procured'">
+                    <div class="panel bg-white border border-secondary rounded position-absolute p-1">Delivered to warehouse</div>
+                  </span>
+                  <span class="fa fa-undo proc-action position-relative px-1" v-if="proc.date_procured && !proc.return_amount" v-b-modal="'modal-return'">
+                    <div class="panel bg-white border border-secondary rounded position-absolute p-1">Return</div>
+                  </span>
+                </template>
               </a>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <b-modal id="modal-procured" size="xs" @ok="procured(selectedProcId)">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mt-4">
+        <thead class="thead-dark">
+          <th>ID</th>
+          <th>Vendor</th>
+          <th>Item Name</th>
+          <th>Category</th>
+          <th>Order Date</th>
+          <th>Procured Date</th>
+          <th>Expired Date</th>
+          <th>Checked By</th>
+          <th>Return Qty.</th>
+          <th>Return Note</th>
+        </thead>
+        <tbody>
+          <tr v-if="selectedProc">
+            <td>{{selectedProc.id}}</td>
+            <td>{{selectedProc.vendor || '-'}}</td>
+            <td>{{selectedProc.item_name}}</td>
+            <td>{{selectedProc.category}}</td>
+            <td>{{formatDate(selectedProc.date_ordered).split('|').join('\n')}}</td>
+            <td>{{formatDate(selectedProc.date_procured).split('|').join('\n')}}</td>
+            <td>{{formatDate(selectedProc.date_exp).split('|').join('\n')}}</td>
+            <td>{{selectedProc.procuror_name || '-'}}</td>
+            <td>{{selectedProc.return_amount || '-'}}</td>
+            <td>{{selectedProc.return_note || '-'}}</td>
+          </tr>
+          <tr v-else>
+            <td colspan="10">Please select a procurement history to view the detail.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <b-modal id="modal-procured" size="xs" @ok="procured(selectedProc)">
       <template #modal-title>
         Please insert expire date
       </template>
       <input type="date" class="form-control" v-model="exp_date" :min="new Date()" required>
+    </b-modal>
+    <b-modal id="modal-return" size="xs" @ok="returnItem(selectedProc)">
+      <template #modal-title>
+        Please write a reason to return this item
+      </template>
+      <div class="row" v-if="selectedProc">
+        <div class="col-auto">
+          <input type="number" class="form-control" v-model="quantity" min="1" :max="selectedProc.quantity" required>
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" v-model="reason" placeholder="Reason" required>
+        </div>
+      </div>
+    </b-modal>
+    <b-modal id="modal-accept" size="xs" modal-class="text-center" @ok="acceptProposal(selectedProc)">
+      Are you sure you want to accept this proposal?
+    </b-modal>
+    <b-modal id="modal-deny" size="xs" modal-class="text-center" @ok="denyProposal(selectedProc)">
+      <template #modal-title>
+        Please write a reason to deny this proposal
+      </template>
+      <input type="text" class="form-control" placeholder="Reason" v-model="reason" required>
     </b-modal>
   </div>
 </template>
@@ -99,13 +165,14 @@ export default {
     return {
       procurement: [],
       note: null,
+      reason: null,
       item_id: 0,
       items: [],
       quantity: null,
       exp_date: null,
       sdate: null,
       edate: null,
-      selectedProcId: null
+      selectedProc: null
     }
   },
   mounted() {
@@ -113,15 +180,36 @@ export default {
     this.getProcurements()
   },
   methods: {
-    acceptProposal(id) {
-      axios.patch(process.env.VUE_APP_API_URL + 'product/procurement/' + id + '/acc', null, {
+    acceptProposal(proc) {
+      axios.patch(process.env.VUE_APP_API_URL + 'product/procurement/' + proc.id + '/acc', null, {
         headers: {token: this.$store.getters.getToken}
       })
       .then(() => this.getProcurements())
     },
-    procured(id) {
+    denyProposal(proc) {
+      if (this.reason) {
+        axios.patch(process.env.VUE_APP_API_URL + 'product/procurement/' + proc.id + '/dec', {reason: this.reason}, {
+          headers: {token: this.$store.getters.getToken}
+        })
+        .then(() => this.getProcurements())
+      } else this.$bvToast.toast('Please write a reason!', {
+        noCloseButton: true,
+        solid: true,
+        variant: 'danger',
+      })
+    },
+    order(proc) {
+      axios.patch(process.env.VUE_APP_API_URL + 'product/procurement/' + proc.id + '/order', null, {
+        headers: {token: this.$store.getters.getToken}
+      })
+      .then(() => {
+        this.getItems()
+        this.getProcurements()
+      })
+    },
+    procured(proc) {
       if(this.exp_date) {
-        axios.patch(process.env.VUE_APP_API_URL + 'product/procurement/' + id + '/done', {date_exp: this.exp_date}, {
+        axios.patch(process.env.VUE_APP_API_URL + 'product/procurement/' + proc.id + '/done', {date_exp: this.exp_date}, {
           headers: {token: this.$store.getters.getToken}
         })
         .then(() => {
@@ -129,6 +217,21 @@ export default {
           this.getProcurements()
         })
       } else this.$bvToast.toast('Please insert expire date', {
+        variant: 'danger',
+        solid: true,
+        noCloseButton: true
+      })
+    },
+    returnItem(proc) {
+      if(this.quantity && this.reason) {
+        axios.post(process.env.VUE_APP_API_URL + 'product/procurement/' + proc.id, {quantity: this.quantity, reason: this.reason}, {
+          headers: {token: this.$store.getters.getToken}
+        })
+        .then(() => {
+          this.getItems()
+          this.getProcurements()
+        })
+      } else this.$bvToast.toast('Please fill in all fields', {
         variant: 'danger',
         solid: true,
         noCloseButton: true

@@ -205,7 +205,9 @@ section.sidebar a.router-link-exact-active {
 
 .panel {
   top: -30px;
-  left: -32px;
+  left: 0;
+  right: 0;
+  width: fit-content;
   visibility: hidden;
 }
 

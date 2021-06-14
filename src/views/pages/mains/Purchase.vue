@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h2>Purchase Page</h2>
-    <div class="row" v-if="$store.getters.getUserData.role_id == 1">
+    <div class="row" v-if="$store.getters.getUserData.role_id == 3">
       <div class="col-md-7 mt-3">
         <form @submit.prevent="submitForm">
           <div class="row">

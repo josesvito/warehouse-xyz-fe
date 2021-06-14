@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h2>Item Page</h2>
-    <div class="row" v-if="[1, 3].includes($store.getters.getUserData.role_id)">
+    <div class="row" v-if="[1].includes($store.getters.getUserData.role_id)">
       <div class="col-md-7 mt-3">
         <form @submit.prevent="submitForm">
           <div class="row">
@@ -32,7 +32,8 @@
         </b-form>
       </div>
     </div>
-    <div class="row mb-2">
+    <div class="row my-2">
+      <h2 class="col">Item list</h2>
       <div class="ml-auto col-auto">
         <div class="input-group">
             <input type="date" v-model="date" class="form-control">
@@ -48,7 +49,6 @@
             <th>Quantity</th>
             <th>Category</th>
             <th>Entry Date</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -58,7 +58,36 @@
             <td>{{ item.quantity }}</td>
             <td>{{ item.category.name }}</td>
             <td>{{ formatDate(item.date_created).split('|').join('\n') }}</td>
-            <td></td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h2>Expiring items</h2>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th>Name</th>
+            <th>Expire On</th>
+            <th>Note</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in expiring" :key="index">
+            <td>{{ item.item_name }} - 
+              <router-link to="/procurement">
+                {{ item.id }}
+              </router-link>
+            </td>
+            <td>{{ formatDate(item.date_exp).split('|').join('\n') }}</td>
+            <td>{{ item.exp_note }}</td>
+            <td class="text-danger">
+              <span v-if="item.exp_note.includes('buang')" class="fa fa-times proc-action position-relative" style="cursor: pointer;" @click="dismiss(item)">
+                <div class="panel bg-white border border-secondary rounded position-absolute p-1">Dismiss</div>
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -75,6 +104,7 @@ export default {
       categories: [],
       category_id: 0,
       category_name: null,
+      expiring: [],
       items: [],
       item_name: null,
       vendor: null,
@@ -84,6 +114,7 @@ export default {
   mounted() {
     this.getCategories()
     this.getItems()
+    this.getExpiring()
   },
   methods: {
     getCategories() {
@@ -98,6 +129,25 @@ export default {
       .then(res => {
         this.items = res.data.values
       })
+    },
+    getExpiring() {
+      const query = '?sdate=' + (this.date || '1970-01-01') + '&edate=2099-12-31'
+      axios.get(process.env.VUE_APP_API_URL + 'product/procurement' + query, { headers: {
+        token: this.$store.getters.getToken
+      }})
+      .then(res => this.expiring = res.data.values.filter(el => {
+        const dateExpWarning = new Date(el.date_exp)
+        dateExpWarning.setDate(dateExpWarning.getDate() - 12)
+        if(new Date(el.date_exp) <= new Date()) el.exp_note = "Mohon segera dibuang"
+        else if(dateExpWarning <= new Date()) el.exp_note = "Mohon segera dihabiskan"
+        if(el.date_procured && el.is_dismissed == 0 && new Date() >= dateExpWarning) return el
+      }))
+    },
+    dismiss(item) {
+      axios.patch(process.env.VUE_APP_API_URL + 'product/procurement/' + item.id + '/dis', null, { headers: {
+        token: this.$store.getters.getToken
+      }})
+      .then(this.getExpiring())
     },
     submitForm() {
       const data = {
