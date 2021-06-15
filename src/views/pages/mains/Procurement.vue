@@ -79,15 +79,15 @@
                 </span>
               </a>
               <a v-if="$store.getters.getUserData.role_id == 1 && proc.date_accepted && !proc.date_ordered" href="#">
-                <span class="fa fa-check proc-action position-relative px-1" v-if="proc.date_accepted" @click="order(proc)">
+                <span class="fa fa-phone proc-action position-relative px-1" v-if="proc.date_accepted" @click="order(proc)">
                   <div class="panel bg-white border border-secondary rounded position-absolute p-1">Order</div>
                 </span>
               </a>
-              <a v-if="$store.getters.getUserData.role_id == 3 && proc.date_accepted" href="#" @click="selectedProc = proc">
+              <a v-if="$store.getters.getUserData.role_id == 3 && proc.date_ordered" href="#" @click="selectedProc = proc">
+                <span class="fa fa-clipboard-check proc-action position-relative px-1" v-if="proc.date_ordered && !proc.date_procured" v-b-modal="'modal-procured'">
+                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Delivered to warehouse</div>
+                </span>
                 <template v-if="$store.getters.getUserData.id == proc.procured_by">
-                  <span class="fa fa-clipboard-check proc-action position-relative px-1" v-if="proc.date_ordered && !proc.date_procured" v-b-modal="'modal-procured'">
-                    <div class="panel bg-white border border-secondary rounded position-absolute p-1">Delivered to warehouse</div>
-                  </span>
                   <span class="fa fa-undo proc-action position-relative px-1" v-if="proc.date_procured && !proc.return_amount" v-b-modal="'modal-return'">
                     <div class="panel bg-white border border-secondary rounded position-absolute p-1">Return</div>
                   </span>
