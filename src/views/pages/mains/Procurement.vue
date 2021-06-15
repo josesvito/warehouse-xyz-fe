@@ -11,8 +11,11 @@
                 <option v-for="(item, i) in items" :key="i" :value="item.id">{{item.vendor}} - {{ item.name }}: {{ item.quantity }} left ({{item.category.name}})</option>
               </select>
             </div>
+            <div class="col-md-9 mb-1">
+              <input type="text" placeholder="Procurement Number" class="form-control" v-model="procurementNumber" required>
+            </div>
             <div class="col-md-3 mb-1">
-              <input type="number" placeholder="Qty" class="form-control" v-model="quantity" min="1">
+              <input type="number" placeholder="Qty" class="form-control" v-model="quantity" min="1" required>
             </div>
           </div>
           <div class="row">
@@ -38,7 +41,7 @@
     <div class="table-responsive">
       <table class="table table-striped table-hover mt-4">
         <thead class="thead-dark">
-          <th>ID</th>
+          <th>Proc No.</th>
           <th>Vendor</th>
           <th>Item Name</th>
           <th>Quantity</th>
@@ -51,7 +54,7 @@
         </thead>
         <tbody>
           <tr v-for="(proc, index) in procurement" :key="index" @click="selectedProc = proc" :class="{'text-info' : proc.return_amount}" style="cursor: pointer;">
-            <td>{{proc.id}}</td>
+            <td>{{proc.generated_id}}</td>
             <td>{{proc.vendor || '-'}}</td>
             <td>{{proc.item_name}}</td>
             <td>{{proc.quantity}}</td>
@@ -74,6 +77,8 @@
                 <span class="fa fa-times proc-action position-relative px-1" v-b-modal="'modal-deny'">
                   <div class="panel bg-white border border-secondary rounded position-absolute p-1">Deny</div>
                 </span>
+              </a>
+              <a v-if="$store.getters.getUserData.role_id == 1 && proc.date_accepted && !proc.date_ordered" href="#">
                 <span class="fa fa-check proc-action position-relative px-1" v-if="proc.date_accepted" @click="order(proc)">
                   <div class="panel bg-white border border-secondary rounded position-absolute p-1">Order</div>
                 </span>
@@ -164,6 +169,7 @@ export default {
   data() {
     return {
       procurement: [],
+      procurementNumber: null,
       note: null,
       reason: null,
       item_id: 0,
@@ -252,6 +258,7 @@ export default {
     },
     submitForm() {
       const data = {
+        generated_id: this.procurementNumber,
         note: this.note,
         item_id: this.item_id,
         quantity: this.quantity,
