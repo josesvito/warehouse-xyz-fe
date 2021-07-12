@@ -10,8 +10,14 @@
             </div>
             <div class="col-md-7 mb-1">
               <select v-model="category_id" class="form-control" required>
-                <option value="0" selected disabled>Select Item</option>
+                <option value="0" selected disabled>Select Category</option>
                 <option v-for="(category, i) in categories" :key="i" :value="category.id">{{ category.name }}</option>
+              </select>
+            </div>
+            <div class="col-md-7 mb-1">
+              <select v-model="unit_id" class="form-control" required>
+                <option value="0" selected disabled>Select Unit</option>
+                <option v-for="(unit, i) in units" :key="i" :value="unit.id">{{ unit.name }}</option>
               </select>
             </div>
             <div class="col-md-7 mb-1">
@@ -26,10 +32,22 @@
         </form>
       </div>
       <div class="col-md-5 mt-3">
-        <b-form @submit.prevent="submitCategory">
-          <input type="text" v-model="category_name" class="form-control" placeholder="Category name" required>
-          <button type="submit" class="btn btn-primary d-flex ml-auto">Create Category</button>
-        </b-form>
+        <div class="row mb-1">
+          <div class="col">
+            <b-form @submit.prevent="submitCategory">
+              <input type="text" v-model="category_name" class="form-control mb-1" placeholder="Category name" required>
+              <button type="submit" class="btn btn-primary d-flex ml-auto">Create Category</button>
+            </b-form>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <div class="col">
+            <b-form @submit.prevent="submitUnit">
+              <input type="text" v-model="unit_name" class="form-control mb-1" placeholder="Unit name" required>
+              <button type="submit" class="btn btn-primary d-flex ml-auto">Create Unit</button>
+            </b-form>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row my-2">
@@ -55,10 +73,9 @@
           <tr v-for="(item, index) in items" :key="index">
             <td>{{ item.vendor }}</td>
             <td>{{ item.name }}</td>
-            <td>{{ item.quantity }}</td>
+            <td>{{ item.quantity }} {{item.unit.name}}</td>
             <td>{{ item.category.name }}</td>
             <td>{{ formatDate(item.date_created).split('|').join('\n') }}</td>
-
           </tr>
         </tbody>
       </table>
@@ -78,7 +95,7 @@
           <tr v-for="(item, index) in expiring" :key="index">
             <td>{{ item.item_name }} - 
               <router-link to="/procurement">
-                {{ item.id }}
+                {{ item.generated_id }}
               </router-link>
             </td>
             <td>{{ formatDate(item.date_exp).split('|').join('\n') }}</td>
@@ -104,6 +121,9 @@ export default {
       categories: [],
       category_id: 0,
       category_name: null,
+      units: [],
+      unit_id: 0,
+      unit_name: null,
       expiring: [],
       items: [],
       item_name: null,
@@ -113,6 +133,7 @@ export default {
   },
   mounted() {
     this.getCategories()
+    this.getUnits()
     this.getItems()
     this.getExpiring()
   },
@@ -120,6 +141,10 @@ export default {
     getCategories() {
       axios.get(process.env.VUE_APP_API_URL + 'master/item_category')
       .then(res => this.categories = res.data.values)
+    },
+    getUnits() {
+      axios.get(process.env.VUE_APP_API_URL + 'master/item_unit')
+      .then(res => this.units = res.data.values)
     },
     getItems() {
       const query = "?date=" + (this.date || '2099-12-31')
@@ -153,6 +178,7 @@ export default {
       const data = {
         name: this.item_name,
         category_id: this.category_id,
+        unit_id: this.unit_id,
         vendor: this.vendor
       }
       axios.post(process.env.VUE_APP_API_URL + 'product/add', data, {headers: {
@@ -165,6 +191,12 @@ export default {
         token: this.$store.getters.getToken
       }})
       .then(() => this.getCategories())      
+    },
+    submitUnit() {
+      axios.post(process.env.VUE_APP_API_URL + 'master/item_unit', {name: this.unit_name}, {headers: {
+        token: this.$store.getters.getToken
+      }})
+      .then(() => this.getUnits())      
     },
     formatDate(date) {
       return date ? moment(String(date)).format('DD MMMM YYYY|HH:mm:ss').toString() : '-'

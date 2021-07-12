@@ -57,7 +57,7 @@
             <td>{{proc.generated_id}}</td>
             <td>{{proc.vendor || '-'}}</td>
             <td>{{proc.item_name}}</td>
-            <td>{{proc.quantity}}</td>
+            <td>{{proc.quantity}} {{proc.unit_type}}</td>
             <td>{{proc.category}}</td>
             <td>{{formatDate(proc.date_proposal).split('|').join('\n')}}</td>
             <td :class="{'text-danger proc-action position-relative' : proc.date_rejected}">
@@ -120,9 +120,9 @@
             <td>{{selectedProc.category}}</td>
             <td>{{formatDate(selectedProc.date_ordered).split('|').join('\n')}}</td>
             <td>{{formatDate(selectedProc.date_procured).split('|').join('\n')}}</td>
-            <td>{{formatDate(selectedProc.date_exp).split('|').join('\n')}}</td>
+            <td>{{formatDate(selectedProc.date_exp, 'DD MMMM YYYY').split('|').join('\n')}}</td>
             <td>{{selectedProc.procuror_name || '-'}}</td>
-            <td>{{selectedProc.return_amount || '-'}}</td>
+            <td>{{selectedProc.return_amount || '-'}} {{selectedProc.unit_type}}</td>
             <td>{{selectedProc.return_note || '-'}}</td>
           </tr>
           <tr v-else>
@@ -269,8 +269,8 @@ export default {
       })
       .then(() => this.getProcurements())
     },
-    formatDate(date) {
-      return date ? moment(String(date)).format('DD MMMM YYYY|HH:mm:ss').toString() : '-'
+    formatDate(date, format = 'DD MMMM YYYY|HH:mm:ss') {
+      return date ? moment(String(date)).format(format).toString() : '-'
     }
   },
   watch: {

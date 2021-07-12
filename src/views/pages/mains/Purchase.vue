@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2>Purchase Page</h2>
+    <h2>Outbond Flow Page</h2>
     <div class="row" v-if="$store.getters.getUserData.role_id == 3">
       <div class="col-md-7 mt-3">
         <form @submit.prevent="submitForm">
@@ -8,7 +8,7 @@
             <div class="col-md-12 mb-1">
               <select v-model="item_id" class="form-control">
                 <option value="0" selected disabled>Select Item</option>
-                <option v-for="(item, i) in items" :key="i" :value="item.id">{{item.vendor}} - {{ item.name }}: {{ item.quantity }} left ({{item.category.name}})</option>
+                <option v-for="(item, i) in items" :key="i" :value="item.id">{{item.vendor}} - {{ item.name }}: {{ item.quantity }} {{ item.unit.name }} left ({{item.category.name}})</option>
               </select>
             </div>
             <div class="col-md-3 mb-1">
@@ -50,7 +50,7 @@
           <tr v-for="(purchase, index) in purchases" :key="index">
             <td>{{purchase.vendor}}</td>
             <td>{{purchase.name}}</td>
-            <td>{{purchase.quantity}}</td>
+            <td>{{purchase.quantity}} {{purchase.unit_name}}</td>
             <td>{{purchase.cat_name}}</td>
             <td>{{formatDate(purchase.date_purchase).split('|').join('\n')}}</td>
             <td>{{purchase.note}}</td>

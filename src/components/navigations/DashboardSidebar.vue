@@ -14,7 +14,7 @@
       <router-link exact-path to="/" v-if="$store.getters.getUserData.role_id == 1"> Dashboard </router-link>
       <router-link exact-path to="/item"> Items </router-link>
       <router-link exact-path to="/procurement"> Procurement </router-link>
-      <router-link exact-path to="/purchases" v-if="$store.getters.getUserData.role_id == 3"> Purchases </router-link>
+      <router-link exact-path to="/purchases" v-if="$store.getters.getUserData.role_id == 3"> Outbond Flow </router-link>
       <router-link exact-path to="/user" v-if="$store.getters.getUserData.role_id == 1"> User List </router-link>
       <a href="#" class="parent" @click="toggleMenu"> Profile </a>
       <div class="nav-child">
