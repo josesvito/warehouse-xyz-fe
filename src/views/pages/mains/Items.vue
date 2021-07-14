@@ -73,7 +73,7 @@
           <tr v-for="(item, index) in items" :key="index">
             <td>{{ item.vendor }}</td>
             <td>{{ item.name }}</td>
-            <td>{{ item.quantity }} {{item.unit.name}}</td>
+            <td>{{ item.qty_by_date }} {{item.unit.name}}</td>
             <td>{{ item.category.name }}</td>
             <td>{{ formatDate(item.date_created).split('|').join('\n') }}</td>
           </tr>
@@ -93,12 +93,14 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in expiring" :key="index">
-            <td>{{ item.item_name }} - 
+            <td class="d-flex">
+              {{ item.item_name }} -&nbsp;
               <router-link to="/procurement">
                 {{ item.generated_id }}
               </router-link>
+              <p class="ml-auto">{{item.quantity - item.quantity_out}} {{item.unit_type}}</p>
             </td>
-            <td>{{ formatDate(item.date_exp).split('|').join('\n') }}</td>
+            <td>{{ formatDate(item.date_exp).split('|')[0] }}</td>
             <td>{{ item.exp_note }}</td>
             <td class="text-danger">
               <span v-if="item.exp_note.includes('buang')" class="fa fa-times proc-action position-relative" style="cursor: pointer;" @click="dismiss(item)">
@@ -165,7 +167,7 @@ export default {
         dateExpWarning.setDate(dateExpWarning.getDate() - 12)
         if(new Date(el.date_exp) <= new Date()) el.exp_note = "Mohon segera dibuang"
         else if(dateExpWarning <= new Date()) el.exp_note = "Mohon segera dihabiskan"
-        if(el.date_procured && el.is_dismissed == 0 && new Date() >= dateExpWarning) return el
+        if(el.date_procured && el.is_dismissed == 0 && new Date() >= dateExpWarning && el.quantity - el.quantity_out > 0) return el
       }))
     },
     dismiss(item) {
