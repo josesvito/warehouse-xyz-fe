@@ -209,6 +209,8 @@ section.sidebar a.router-link-exact-active {
   right: 0;
   width: fit-content;
   visibility: hidden;
+  z-index: 1;
+  cursor: default;
 }
 
 .proc-action:hover .panel {

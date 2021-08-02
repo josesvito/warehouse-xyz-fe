@@ -112,10 +112,10 @@ export default {
       }
       try {
         const response = await userService.login(this.userName, this.password);
-        if(response) {
+        if(response.data.status == 1) {
           this.$router.go()
         } else {
-          this.errorMessage = response.data.message;
+          this.errorMessage = response.data.values;
         }
         this.isLoading = false;
       } catch (error) {
