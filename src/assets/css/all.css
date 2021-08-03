@@ -204,7 +204,7 @@ section.sidebar a.router-link-exact-active {
 }
 
 .panel {
-  top: -30px;
+  top: -36px;
   left: 0;
   right: 0;
   width: fit-content;
@@ -213,6 +213,18 @@ section.sidebar a.router-link-exact-active {
   cursor: default;
 }
 
+.proc-action {
+  cursor: pointer;
+}
+
 .proc-action:hover .panel {
+  visibility: visible;
+}
+
+tr + tr.row-detail {
+  visibility: collapse;
+}
+
+tr + tr.row-detail.active {
   visibility: visible;
 }

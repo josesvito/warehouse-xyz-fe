@@ -53,81 +53,82 @@
           <th></th>
         </thead>
         <tbody>
-          <tr v-for="(proc, index) in procurement" :key="index" @click="selectedProc = proc" :class="{'text-info' : proc.return_amount}" style="cursor: pointer;">
-            <td>{{proc.generated_id}}</td>
-            <td>{{proc.vendor || '-'}}</td>
-            <td>{{proc.item_name}}</td>
-            <td>{{proc.quantity}} {{proc.unit_type}}</td>
-            <td>{{proc.category}}</td>
-            <td>{{formatDate(proc.date_proposal).split('|').join('\n')}}</td>
-            <td :class="{'text-danger proc-action position-relative' : proc.date_rejected}">
-              {{ proc.date_accepted ? formatDate(proc.date_accepted).split('|').join('\n') :
-              formatDate(proc.date_rejected).split('|').join('\n')}}
-              <template v-if="proc.date_rejected">
-                <div class="panel bg-white border border-secondary rounded position-absolute p-1">{{proc.reason}}</div>
-              </template>
-            </td>
-            <td>{{proc.requestee || '-'}}</td>
-            <td>{{proc.note || '-'}}</td>
-            <td class="text-nowrap">
-              <a v-if="$store.getters.getUserData.role_id == 1 && !proc.date_accepted && !proc.date_rejected" href="#" @click="selectedProc = proc">
-                <span class="fa fa-check proc-action position-relative px-1" v-b-modal="'modal-accept'">
-                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Accept</div>
-                </span>
-                <span class="fa fa-times proc-action position-relative px-1" v-b-modal="'modal-deny'">
-                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Deny</div>
-                </span>
-              </a>
-              <a v-if="$store.getters.getUserData.role_id == 1 && proc.date_accepted && !proc.date_ordered" href="#">
-                <span class="fa fa-phone proc-action position-relative px-1" v-if="proc.date_accepted" @click="order(proc)">
-                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Order</div>
-                </span>
-              </a>
-              <a v-if="$store.getters.getUserData.role_id == 3 && proc.date_ordered" href="#" @click="selectedProc = proc">
-                <span class="fa fa-clipboard-check proc-action position-relative px-1" v-if="proc.date_ordered && !proc.date_procured" v-b-modal="'modal-procured'">
-                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Delivered to warehouse</div>
-                </span>
-                <template v-if="$store.getters.getUserData.id == proc.procured_by">
-                  <span class="fa fa-undo proc-action position-relative px-1" v-if="proc.date_procured && !proc.return_amount" v-b-modal="'modal-return'">
-                    <div class="panel bg-white border border-secondary rounded position-absolute p-1">Return</div>
-                  </span>
+          <template v-for="(proc, index) in procurement">
+            <tr :key="index" @click="selectedProc = proc" :class="{'text-info' : proc.return_amount}" style="cursor: pointer;">
+              <td>{{proc.generated_id}}</td>
+              <td>{{proc.vendor || '-'}}</td>
+              <td>{{proc.item_name}}</td>
+              <td>{{proc.quantity}} {{proc.unit_type}}</td>
+              <td>{{proc.category}}</td>
+              <td>{{formatDate(proc.date_proposal).split('|').join('\n')}}</td>
+              <td :class="{'text-danger proc-action position-relative' : proc.date_rejected}">
+                {{ proc.date_accepted ? formatDate(proc.date_accepted).split('|').join('\n') :
+                formatDate(proc.date_rejected).split('|').join('\n')}}
+                <template v-if="proc.date_rejected">
+                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">{{proc.reason}}</div>
                 </template>
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="table-responsive">
-      <table class="table table-striped table-hover mt-4">
-        <thead class="thead-dark">
-          <th>ID</th>
-          <th>Vendor</th>
-          <th>Item Name</th>
-          <th>Category</th>
-          <th>Order Date</th>
-          <th>Procured Date</th>
-          <th>Expired Date</th>
-          <th>Checked By</th>
-          <th>Return Qty.</th>
-          <th>Return Note</th>
-        </thead>
-        <tbody>
-          <tr v-if="selectedProc">
-            <td>{{selectedProc.id}}</td>
-            <td>{{selectedProc.vendor || '-'}}</td>
-            <td>{{selectedProc.item_name}}</td>
-            <td>{{selectedProc.category}}</td>
-            <td>{{formatDate(selectedProc.date_ordered).split('|').join('\n')}}</td>
-            <td>{{formatDate(selectedProc.date_procured).split('|').join('\n')}}</td>
-            <td>{{formatDate(selectedProc.date_exp, 'DD MMMM YYYY').split('|').join('\n')}}</td>
-            <td>{{selectedProc.procuror_name || '-'}}</td>
-            <td>{{selectedProc.return_amount || '-'}} {{selectedProc.unit_type}}</td>
-            <td>{{selectedProc.return_note || '-'}}</td>
-          </tr>
-          <tr v-else>
-            <td colspan="10">Please select a procurement history to view the detail.</td>
-          </tr>
+              </td>
+              <td>{{proc.requestee || '-'}}</td>
+              <td>{{proc.note || '-'}}</td>
+              <td class="text-nowrap">
+                <a v-if="$store.getters.getUserData.role_id == 1 && !proc.date_accepted && !proc.date_rejected" href="#" @click="selectedProc = proc">
+                  <span class="fa fa-check proc-action position-relative px-1" v-b-modal="'modal-accept'">
+                    <div class="panel bg-white border border-secondary rounded position-absolute p-1">Accept</div>
+                  </span>
+                  <span class="fa fa-times proc-action position-relative px-1" v-b-modal="'modal-deny'">
+                    <div class="panel bg-white border border-secondary rounded position-absolute p-1">Deny</div>
+                  </span>
+                </a>
+                <a v-if="$store.getters.getUserData.role_id == 1 && proc.date_accepted && !proc.date_ordered" href="#">
+                  <span class="fa fa-phone proc-action position-relative px-1" v-if="proc.date_accepted" @click="order(proc)">
+                    <div class="panel bg-white border border-secondary rounded position-absolute p-1">Order</div>
+                  </span>
+                </a>
+                <a v-if="$store.getters.getUserData.role_id == 3 && proc.date_ordered" href="#" @click="selectedProc = proc">
+                  <span class="fa fa-clipboard-check proc-action position-relative px-1" v-if="proc.date_ordered && !proc.date_procured" v-b-modal="'modal-procured'">
+                    <div class="panel bg-white border border-secondary rounded position-absolute p-1">Delivered to warehouse</div>
+                  </span>
+                  <template v-if="$store.getters.getUserData.id == proc.procured_by">
+                    <span class="fa fa-undo proc-action position-relative px-1" v-if="proc.date_procured && !proc.return_amount" v-b-modal="'modal-return'">
+                      <div class="panel bg-white border border-secondary rounded position-absolute p-1">Return</div>
+                    </span>
+                  </template>
+                </a>
+              </td>
+            </tr>
+            <tr :key="index" class="row-detail" :class="{'active' : selectedProc && selectedProc.id == proc.id}">
+              <td colspan="10">
+                <div class="d-flex">
+                  <template v-if="selectedProc">
+                    <div class="text-nowrap">
+                      Order Date<br/>
+                      Procured Date<br/>
+                      Expired Date<br/>
+                      Checked By<br/>
+                      Return Qty.<br/>
+                      Return Note
+                    </div>
+                    <div class="px-2">
+                      :<br/>
+                      :<br/>
+                      :<br/>
+                      :<br/>
+                      :<br/>
+                      :
+                    </div>
+                    <div>
+                      {{formatDate(selectedProc.date_ordered).split('|').join(' ')}}<br/>
+                      {{formatDate(selectedProc.date_procured).split('|').join(' ')}}<br/>
+                      {{formatDate(selectedProc.date_exp, 'DD MMMM YYYY').split('|')[0]}}<br/>
+                      {{selectedProc.procuror_name || '-'}}<br/>
+                      {{selectedProc.return_amount || '-'}} {{selectedProc.unit_type}}<br/>
+                      {{selectedProc.return_note || '-'}}
+                    </div>
+                  </template>
+                </div>
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </div>

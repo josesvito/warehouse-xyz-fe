@@ -4,11 +4,12 @@ import store from "../store/index.js"
 import Home from "../views/Home.vue";
 import LandingPage from "../views/LandingPage.vue";
 import DetailAccountPage from "../views/pages/profiles/DetailAccount.vue";
-import Dashboard from "../views/pages/mains/Dashboard.vue"
-import Items from "../views/pages/mains/Items.vue"
-import Procurement from "../views/pages/mains/Procurement.vue"
-import Purchases from "../views/pages/mains/Purchase.vue"
-import User from "../views/pages/mains/User.vue"
+import Dashboard from "../views/pages/mains/Dashboard.vue";
+import Items from "../views/pages/mains/Items.vue";
+import Procurement from "../views/pages/mains/Procurement.vue";
+import Purchases from "../views/pages/mains/Purchase.vue";
+import User from "../views/pages/mains/User.vue";
+import Returned from "../views/pages/mains/Returned.vue";
 
 Vue.use(VueRouter);
 
@@ -36,6 +37,7 @@ const routes = [{
       {path: 'item', component: Items},
       {path: 'procurement', component: Procurement},
       {path: 'purchases', component: Purchases},
+      {path: 'returned', component: Returned},
       {path: 'user', component: User, beforeEnter(to, from, next) {
         if (store.getters.getUserData.role_id == 1) next()
         else next('/')

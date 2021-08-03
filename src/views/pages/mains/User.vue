@@ -23,7 +23,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, i) in filtered_users" :key="i">
+          <tr v-for="(user, i) in filtered_users" :key="i" :style="{'color' : !user.is_active ? 'red' : ''}">
             <td>{{ user.username }}</td>
             <td>
               <input v-if="$store.getters.getUserData.id != user.id" type="text" class="form-control" v-model="edited_users[edited_users.findIndex(el => el.username == user.username)].name">
@@ -45,6 +45,9 @@
                 </span>
                 <span class="fa fa-undo proc-action position-relative px-1" @click="revertChange(user)">
                   <div class="panel bg-white border border-secondary rounded position-absolute p-1">Revert Change</div>
+                </span>
+                <span class="fa fa-hammer proc-action position-relative px-1" @click="toggleActivation(user)">
+                  <div class="panel bg-white border border-secondary rounded position-absolute p-1">Change Activation</div>
                 </span>
               </template>
             </td>
@@ -106,6 +109,23 @@ export default {
     },
     revertChange(user) {
       Object.assign(this.edited_users[this.edited_users.findIndex(el => el.username == user.username)], JSON.parse(JSON.stringify(user)))
+    },
+    toggleActivation(user) {
+      axios.put(process.env.VUE_APP_API_URL + 'users/profile/' + user.id, null, {
+        headers: {
+          token: this.$store.getters.getToken
+        }
+      })
+      .then(res => {
+        if(res.data.status == 1) {
+          this.$bvToast.toast(res.data.values, {
+            variant: 'success',
+            solid: true,
+            noCloseButton: true,
+          })
+          this.getUsers()
+        }
+      })
     },
     getUsers() {
       axios.get(process.env.VUE_APP_API_URL + 'users/list', {headers: {

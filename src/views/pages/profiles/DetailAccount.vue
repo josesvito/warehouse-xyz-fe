@@ -31,7 +31,6 @@
           />
           <!-- // TODO: NPWP -->
           <MyInputFormText
-            v-if="npwp.length >= 0"
             type="text"
             label="NPWP"
             v-model="$v.npwp.$model"
@@ -148,7 +147,6 @@ export default {
   },
   data() {
     return {
-      pengguna: this.$store.getters.getUserData,
       username: null,
       fullName: null,
       password: null,
@@ -157,6 +155,11 @@ export default {
       isLoading: false,
       errorMessage: null,
     };
+  },
+  computed: {
+    pengguna() {
+      return this.$store.getters.getUserData
+    }
   },
   mounted() {
     if (!this.pengguna) this.getProfile();
