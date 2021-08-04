@@ -13,6 +13,7 @@
     <div class="table-responsive">
       <table class="table table-striped table-hover">
         <thead class="thead-dark">
+          <th>Proc No.</th>
           <th>Vendor</th>
           <th>Item Name</th>
           <th>Category</th>
@@ -22,14 +23,15 @@
           <th>Handler</th>
         </thead>
         <tbody>
-          <tr v-for="(purchase, index) in purchases" :key="index">
-            <td>{{purchase.vendor}}</td>
-            <td>{{purchase.item_name}}</td>
-            <td>{{purchase.category}}</td>
-            <td>{{purchase.return_amount}} {{purchase.unit_type}}</td>
-            <td>{{formatDate(purchase.date_procured).split('|').join('\n')}}</td>
-            <td>{{purchase.return_note}}</td>
-            <td>{{purchase.procuror_name}}</td>
+          <tr v-for="(returned, index) in returns" :key="index">
+            <td>{{returned.generated_id || '-'}}</td>
+            <td>{{returned.vendor}}</td>
+            <td>{{returned.item_name}}</td>
+            <td>{{returned.category}}</td>
+            <td>{{returned.return_amount}} {{returned.unit_type}}</td>
+            <td>{{formatDate(returned.date_procured).split('|').join('\n')}}</td>
+            <td>{{returned.return_note}}</td>
+            <td>{{returned.procuror_name}}</td>
           </tr>
         </tbody>
       </table>
@@ -48,7 +50,7 @@ export default {
       items: [],
       filtered: [],
       note: null,
-      purchases: [],
+      returns: [],
       quantity: null,
       sdate: null,
       edate: null
@@ -56,7 +58,7 @@ export default {
   },
   mounted() {
     this.getItems()
-    this.getPurchase()
+    this.getReturns()
   },
   methods: {
     getItems() {
@@ -67,12 +69,12 @@ export default {
         this.items = res.data.values
       })
     },
-    getPurchase() {
+    getReturns() {
       const query = '?sdate=' + (this.sdate || '1970-01-01') + '&edate=' + (this.edate || '2099-12-31') 
       axios.get(process.env.VUE_APP_API_URL + 'product/returned' + query, { headers: {
         token: this.$store.getters.getToken
       }})
-      .then(res => this.purchases = res.data.values)
+      .then(res => this.returns = res.data.values)
     },
     formatDate(date) {
       return date ? moment(String(date)).format("DD MMMM YYYY|HH:mm:ss").toString() : '-'
@@ -80,10 +82,10 @@ export default {
   },
   watch: {
     sdate() {
-      this.getPurchase()
+      this.getReturns()
     },
     edate() {
-      this.getPurchase()
+      this.getReturns()
     }
   }
 }

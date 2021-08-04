@@ -37,7 +37,10 @@ const routes = [{
       {path: 'item', component: Items},
       {path: 'procurement', component: Procurement},
       {path: 'purchases', component: Purchases},
-      {path: 'returned', component: Returned},
+      {path: 'returned', component: Returned, beforeEnter(to, from, next) {
+        if(store.getters.getUserData.role_id == 2) next('/')
+        else next()
+      }},
       {path: 'user', component: User, beforeEnter(to, from, next) {
         if (store.getters.getUserData.role_id == 1) next()
         else next('/')
