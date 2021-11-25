@@ -26,6 +26,23 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons' // semua di import
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(fas)
+
+import { Line, Pie } from "vue-chartjs";
+
+Vue.component('line-chart', {
+  extends: Line,
+  props: ["chartData"],
+  mounted() {
+    this.renderChart(this.chartData, {responsive: true, maintainAspectRatio: false});
+  },
+});
+Vue.component('pie-chart', {
+  extends: Pie,
+  props: ["chartData"],
+  mounted() {
+    this.renderChart(this.chartData, {responsive: true, maintainAspectRatio: false});
+  },
+});
 Vue.component('font-awesome', FontAwesomeIcon)
 //* END Font Awesome
 
