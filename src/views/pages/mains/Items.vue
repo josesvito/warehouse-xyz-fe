@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <h2>Item Page</h2>
     <div class="row" v-if="[1].includes($store.getters.getUserData.role_id)">
       <div class="col-md-7 mt-3">
@@ -54,7 +54,7 @@
       <h2 class="col">Item list</h2>
       <div class="ml-auto col-auto">
         <div class="input-group">
-            <input type="date" v-model="date" class="form-control">
+          <MyInputFormDate v-model="date" /> 
         </div>
       </div>
     </div>
@@ -116,8 +116,12 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import MyInputFormDate from "@/components/form/MyInputFormDate";
 
 export default {
+  components: {
+    MyInputFormDate,
+  },
   data() {
     return {
       categories: [],

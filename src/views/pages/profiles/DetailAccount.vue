@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <b-form @submit.prevent="onSubmit" v-if="$store.getters.getUserData">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <!-- // TODO: username -->
           <MyInputFormText
             v-if="username"

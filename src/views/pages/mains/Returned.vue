@@ -1,12 +1,12 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <h2>Returned Items</h2>
     <div class="row mb-2">
       <div class="ml-auto col-auto">
         <div class="input-group">
-            <input type="date" v-model="sdate" :max="edate" class="form-control">
-            <div class="input-group-text">to</div>
-            <input type="date" v-model="edate" :min="sdate" class="form-control">
+          <MyInputFormDate v-model="sdate" :max="edate" />
+          <div class="input-group-text">to</div>
+          <MyInputFormDate v-model="edate" :max="sdate" />
         </div>
       </div>
     </div>
@@ -41,9 +41,13 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import MyInputFormDate from "@/components/form/MyInputFormDate";
 
 export default {
   name: 'Returned',
+  components: {
+    MyInputFormDate,
+  },
   data() {
     return {
       item_id: 0,

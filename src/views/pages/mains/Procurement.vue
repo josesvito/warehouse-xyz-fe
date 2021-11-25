@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <h2>Procurement Page</h2>
     <div class="row" v-if="$store.getters.getUserData.role_id == 2">
       <div class="col-md-7 mt-3">
@@ -32,9 +32,9 @@
     <div class="row">
       <div class="ml-auto col-auto">
         <div class="input-group">
-            <input type="date" v-model="sdate" :max="edate" class="form-control">
-            <div class="input-group-text">to</div>
-            <input type="date" v-model="edate" :min="sdate" class="form-control">
+          <MyInputFormDate v-model="sdate" />
+          <div class="input-group-text">to</div>
+          <MyInputFormDate v-model="edate" />
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@
       <template #modal-title>
         Please insert expire date
       </template>
-      <input type="date" class="form-control" v-model="exp_date" :min="new Date()" required>
+      <MyInputFormDate v-model="exp_date" required />
     </b-modal>
     <b-modal id="modal-return" size="xs" @ok="returnItem(selectedProc)">
       <template #modal-title>
@@ -165,8 +165,12 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import MyInputFormDate from "@/components/form/MyInputFormDate";
 
 export default {
+  components: {
+    MyInputFormDate
+  },
   data() {
     return {
       procurement: [],

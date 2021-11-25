@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <h2>User List</h2>
     <div class="row mb-2">
       <div class="ml-auto col-md-3">
