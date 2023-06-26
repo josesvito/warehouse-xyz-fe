@@ -11,7 +11,7 @@
       <span></span>
     </div>
     <div class="container text-left">
-      <router-link exact-path to="/" v-if="$store.getters.getUserData.role_id == 1"> Dashboard </router-link>
+      <router-link exact-path to="/" v-if="$store.getters.getUserData.role_id == 1"> Report </router-link>
       <router-link exact-path to="/item"> Items </router-link>
       <router-link exact-path to="/procurement"> Procurement </router-link>
       <router-link exact-path to="/purchases" v-if="$store.getters.getUserData.role_id == 3"> Outbond Flow </router-link>
